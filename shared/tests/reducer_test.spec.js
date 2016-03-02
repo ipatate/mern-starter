@@ -1,5 +1,5 @@
 import expect from 'expect';
-import postReducer from '../redux/reducers/reducer';
+import postReducer from '../redux/reducers';
 import deepFreeze from 'deep-freeze';
 import * as ActionTypes from '../redux/constants/constants';
 
