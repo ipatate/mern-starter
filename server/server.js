@@ -49,10 +49,9 @@ app.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
 app.use(Express.static(path.resolve(__dirname, '../static')));
 app.use('/api', posts);
 
-//view engine
+// view engine
 app.set('views', `${__dirname}/layout`);
 app.set('view engine', 'jade');
-
 
 
 // Server Side Rendering based on routes matched by React-router.
@@ -69,7 +68,7 @@ app.use((req, res) => {
     const initialState = { posts: [], post: {} };
 
     const store = configureStore(initialState);
-
+    const cssPath = process.env.NODE_ENV === 'production' ? '/css/app.min.css' : '/css/app.css';
     fetchComponentData(store.dispatch, renderProps.components, renderProps.params)
       .then(() => {
         const initialView = renderToString(
@@ -78,16 +77,10 @@ app.use((req, res) => {
           </Provider>
         );
         const finalState = store.getState();
-        const cssPath = process.env.NODE_ENV === 'production' ? '/css/app.min.css' : '/css/app.css';
-        
-        //let html = ReactDOMServer.renderToString(initialView);
-        res.render('layout.jade', {cssPath: cssPath, initialState: JSON.stringify(finalState), reactOutput: initialView});
-        
-        
-        //res.status(200).end(renderFullPage(initialView, finalState));
+        res.render('layout.jade', { cssPath, initialState: JSON.stringify(finalState), reactOutput: initialView });
       })
       .catch(() => {
-        res.end(renderFullPage('Error', {}));
+        res.render('error.jade', { cssPath, initialState: JSON.stringify({}) });
       });
   });
 });
